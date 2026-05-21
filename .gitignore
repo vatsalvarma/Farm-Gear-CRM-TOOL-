@@ -4,6 +4,9 @@
 .env.*.local
 !.env.example
 
+# ── Local credentials (never commit) ─────────────────────────
+backend/application-local.yml
+
 # ── Node / Frontend ──────────────────────────────────────────
 frontend/node_modules/
 frontend/.next/

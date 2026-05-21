@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { ImagePlus, Loader2, X } from 'lucide-react'
 import { equipmentApi } from '@/lib/api/equipment'
 import type { EquipmentCategory, FuelType } from '@/types'
 
@@ -16,6 +16,8 @@ const CATEGORIES: EquipmentCategory[] = [
 ]
 
 const FUEL_TYPES: FuelType[] = ['DIESEL', 'PETROL', 'ELECTRIC', 'MANUAL', 'SOLAR']
+
+const MAX_IMAGES = 5
 
 interface FormData {
   title: string
@@ -38,7 +40,32 @@ const inputClass = 'w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm
 export default function NewEquipmentPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [images, setImages] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    const remaining = MAX_IMAGES - images.length
+    const toAdd = files.slice(0, remaining)
+    if (toAdd.length === 0) return
+    const newImages = [...images, ...toAdd]
+    setImages(newImages)
+    toAdd.forEach(file => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviews(prev => [...prev, reader.result as string])
+      }
+      reader.readAsDataURL(file)
+    })
+    e.target.value = ''
+  }
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index))
+    setPreviews(prev => prev.filter((_, i) => i !== index))
+  }
 
   const onSubmit = async (data: FormData) => {
     setLoading(true)
@@ -47,6 +74,16 @@ export default function NewEquipmentPage() {
       if (!payload.pricePerHour || isNaN(payload.pricePerHour)) delete (payload as Record<string, unknown>).pricePerHour
       if (!payload.depositAmount || isNaN(payload.depositAmount)) delete (payload as Record<string, unknown>).depositAmount
       const created = await equipmentApi.create(payload as Record<string, unknown>) as { id: string }
+
+      if (images.length > 0) {
+        try {
+          await equipmentApi.uploadImages(created.id, images)
+          toast.success(`Equipment saved with ${images.length} image${images.length > 1 ? 's' : ''}!`)
+        } catch {
+          toast.warning('Equipment created but image upload failed. You can add images later.')
+        }
+      }
+
       try {
         await equipmentApi.submitForApproval(created.id)
         toast.success('Listing submitted for admin approval!')
@@ -70,6 +107,57 @@ export default function NewEquipmentPage() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
+        {/* Images */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-semibold text-gray-900">Equipment Photos</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Upload up to {MAX_IMAGES} photos. First photo will be the cover image.</p>
+            </div>
+            <span className="text-sm text-gray-400">{images.length}/{MAX_IMAGES}</span>
+          </div>
+
+          <div className="grid grid-cols-5 gap-3">
+            {previews.map((src, i) => (
+              <div key={i} className="relative aspect-square rounded-lg overflow-hidden border-2 border-green-200 group">
+                <img src={src} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+                {i === 0 && (
+                  <span className="absolute bottom-0 left-0 right-0 bg-green-600 text-white text-[10px] text-center py-0.5 font-medium">
+                    Cover
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeImage(i)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+
+            {images.length < MAX_IMAGES && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-brand-400 hover:bg-brand-50 flex flex-col items-center justify-center gap-1 transition-colors"
+              >
+                <ImagePlus className="w-5 h-5 text-gray-400" />
+                <span className="text-[10px] text-gray-400">Add Photo</span>
+              </button>
+            )}
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleImageSelect}
+          />
+        </div>
+
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-4">
           <h2 className="font-semibold text-gray-900">Basic Information</h2>
 

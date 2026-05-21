@@ -10,7 +10,7 @@ interface User {
   role: UserRole
   profilePhotoUrl?: string
   emailVerified: boolean
-  phoneVerified: boolean
+  phoneVerified?: boolean
   preferredLanguage: string
 }
 

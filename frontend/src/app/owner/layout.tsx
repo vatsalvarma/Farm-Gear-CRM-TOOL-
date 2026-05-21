@@ -2,12 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Tractor, BarChart3, Plus, MessageCircle, Bell, User, Settings, LogOut } from 'lucide-react'
+import { Tractor, BarChart3, Plus, Calendar, TrendingUp, MessageCircle, Bell, User, Settings, LogOut } from 'lucide-react'
 import { useAuthStore } from '@/lib/store/authStore'
 
 const navItems = [
   { href: '/owner/dashboard', icon: BarChart3, label: 'Dashboard' },
   { href: '/owner/equipment/new', icon: Plus, label: 'Add Equipment' },
+  { href: '/owner/equipment', icon: Tractor, label: 'My Equipment' },
+  { href: '/owner/bookings', icon: Calendar, label: 'View Bookings' },
+  { href: '/owner/earnings', icon: TrendingUp, label: 'View Earnings' },
   { href: '/owner/chat', icon: MessageCircle, label: 'Messages' },
   { href: '/owner/notifications', icon: Bell, label: 'Notifications' },
   { href: '/owner/profile', icon: User, label: 'Profile' },

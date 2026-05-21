@@ -45,19 +45,19 @@ spring:
           max-idle: 5
 
   mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
+    host: ${MAIL_HOST:mail.prizmabrixx.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:noreply@farmgearconnect.com}
-    password: ${MAIL_PASSWORD:}
+    username: ${MAIL_USERNAME:manojkumar@prizmabrixx.com}
+    password: ${MAIL_PASSWORD:Manoj@19}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
 
   servlet:
     multipart:

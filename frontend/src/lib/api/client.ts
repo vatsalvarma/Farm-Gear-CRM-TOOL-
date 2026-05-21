@@ -1,6 +1,9 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
+const API_BASE_URL =
+  typeof window !== 'undefined'
+    ? '/api'
+    : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api')
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -30,9 +33,10 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+    const status = error.response?.status
 
-    // If error is 401 and we haven't retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Handle 401 (unauthenticated) or 403 (may be expired token returning access-denied)
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
       originalRequest._retry = true
 
       try {
@@ -42,7 +46,7 @@ apiClient.interceptors.response.use(
         }
 
         // Try to refresh the token
-        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+        const response = await axios.post('/api/auth/refresh', {
           refreshToken,
         })
 

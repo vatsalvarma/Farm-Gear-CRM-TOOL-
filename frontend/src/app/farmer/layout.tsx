@@ -6,9 +6,10 @@ import { Tractor, Calendar, Search, MessageCircle, Bell, User, LogOut } from 'lu
 import { useAuthStore } from '@/lib/store/authStore'
 
 const navItems = [
-  { href: '/farmer/dashboard', icon: Calendar, label: 'My Bookings' },
+  { href: '/farmer/dashboard', icon: Calendar, label: 'Dashboard' },
+  { href: '/farmer/bookings', icon: Calendar, label: 'My Bookings' },
   { href: '/marketplace', icon: Search, label: 'Browse Equipment' },
-  { href: '/farmer/chat', icon: MessageCircle, label: 'Messages' },
+  { href: '/farmer/messages', icon: MessageCircle, label: 'Messages' },
   { href: '/farmer/notifications', icon: Bell, label: 'Notifications' },
   { href: '/farmer/profile', icon: User, label: 'Profile' },
 ]

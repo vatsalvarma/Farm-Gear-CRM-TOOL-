@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -125,10 +126,31 @@ export default function LoginPage() {
               </Link>
             </div>
 
+            {/* Terms & Conditions */}
+            <div className="flex items-start gap-3">
+              <input
+                id="accept-terms"
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer"
+              />
+              <label htmlFor="accept-terms" className="text-sm text-gray-600 cursor-pointer select-none">
+                I have read and agree to the{' '}
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  className="text-green-600 hover:text-green-700 font-medium underline underline-offset-2"
+                >
+                  Terms and Conditions
+                </Link>
+              </label>
+            </div>
+
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !acceptedTerms}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (

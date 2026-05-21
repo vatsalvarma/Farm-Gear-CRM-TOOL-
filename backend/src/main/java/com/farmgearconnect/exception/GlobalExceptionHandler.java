@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -87,6 +88,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicate(DuplicateResourceException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String message = "Duplicate record - data already exists";
+        String cause = ex.getMostSpecificCause().getMessage();
+        if (cause != null) {
+            if (cause.toLowerCase().contains("email")) {
+                message = "Email is already registered";
+            } else if (cause.toLowerCase().contains("phone")) {
+                message = "Phone number is already registered";
+            }
+        }
+        return buildResponse(HttpStatus.CONFLICT, message, null);
     }
 
     @ExceptionHandler(Exception.class)

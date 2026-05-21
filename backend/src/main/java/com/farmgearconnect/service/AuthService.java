@@ -55,11 +55,11 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request, String ipAddress) {
-        if (userRepository.existsByEmailAndDeletedAtIsNull(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email already registered");
         }
         if (request.getPhone() != null
-                && userRepository.existsByPhoneAndDeletedAtIsNull(request.getPhone())) {
+                && userRepository.existsByPhone(request.getPhone())) {
             throw new DuplicateResourceException("Phone number already registered");
         }
 

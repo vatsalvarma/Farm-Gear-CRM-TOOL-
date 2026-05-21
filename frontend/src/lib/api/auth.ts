@@ -30,7 +30,7 @@ export interface AuthResponse {
     role: UserRole
     profilePhotoUrl?: string
     emailVerified: boolean
-    phoneVerified: boolean
+    phoneVerified?: boolean
     preferredLanguage: string
   }
 }

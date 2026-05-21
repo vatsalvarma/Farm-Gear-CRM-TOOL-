@@ -59,20 +59,24 @@ export default function AdminDashboard() {
 
   const handleApprove = async (id: string) => {
     try {
-      await equipmentApi.adminApprove(id)
-      toast.success('Equipment approved')
+      await equipmentApi.approve(id)
+      toast.success('Equipment approved — now live on the marketplace!')
       loadData()
-    } catch { /* handled */ }
+    } catch {
+      toast.error('Failed to approve')
+    }
   }
 
   const handleReject = async (id: string) => {
-    const reason = prompt('Reason for rejection?')
-    if (!reason) return
+    const reason = window.prompt('Rejection reason (optional):')
+    if (reason === null) return
     try {
-      await equipmentApi.adminReject(id, reason)
-      toast.success('Equipment rejected')
+      await equipmentApi.reject(id, reason || 'Does not meet listing standards')
+      toast.success('Equipment rejected — owner has been notified')
       loadData()
-    } catch { /* handled */ }
+    } catch {
+      toast.error('Failed to reject')
+    }
   }
 
   const handleBroadcast = async () => {
