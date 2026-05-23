@@ -104,57 +104,57 @@ export default function AdminDashboard() {
   ] : []
 
   return (
-    <div className="p-8">
-            <div className="mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-500 mt-1">Platform overview and management</p>
+    <div className="p-4 sm:p-6 lg:p-8">
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+              <p className="text-gray-500 mt-1 text-sm sm:text-base">Platform overview and management</p>
             </div>
 
             {/* Stats Grid */}
             {loading ? (
-              <div className="grid grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl p-5 border border-gray-100 animate-pulse h-28" />
+                  <div key={i} className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 animate-pulse h-24 sm:h-28" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 {statCards.map((s, i) => (
                   <motion.div
                     key={s.label}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.04 }}
-                    className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
+                    className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm"
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${s.color}`}>
-                      <s.icon className="w-5 h-5" />
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mb-2 sm:mb-3 ${s.color}`}>
+                      <s.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
-                    <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-                    <div className="text-sm text-gray-500 mt-0.5">{s.label}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">{s.value}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mt-0.5">{s.label}</div>
                   </motion.div>
                 ))}
               </div>
             )}
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Pending Approvals */}
-              <div className="col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm">
-                <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-                  <h2 className="font-semibold text-gray-900">Pending Equipment Approvals</h2>
+              <div className="col-span-1 lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between">
+                  <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Pending Equipment Approvals</h2>
                   <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
                     {pendingEquipment.length} pending
                   </span>
                 </div>
                 {pendingEquipment.length === 0 ? (
-                  <div className="p-12 text-center text-gray-400">
-                    <CheckCircle className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                  <div className="p-8 sm:p-12 text-center text-gray-400">
+                    <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 text-gray-300" />
                     All caught up!
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-50">
                     {pendingEquipment.map(eq => (
-                      <div key={eq.id} className="p-4 flex items-center gap-4">
+                      <div key={eq.id} className="p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                         <div className="w-12 h-12 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
                           {eq.images?.[0] ? (
                             <img src={eq.images[0].imageUrl} alt="" className="w-full h-full object-cover" />
@@ -164,26 +164,26 @@ export default function AdminDashboard() {
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 truncate">{eq.title}</div>
-                          <div className="text-sm text-gray-500">
+                        <div className="flex-1 min-w-0 w-full">
+                          <div className="font-medium text-gray-900 truncate text-sm sm:text-base">{eq.title}</div>
+                          <div className="text-xs sm:text-sm text-gray-500">
                             {eq.owner.fullName} · {eq.district}, {eq.state}
                           </div>
                           <div className="text-xs text-gray-400 mt-0.5">
                             {formatCurrency(eq.pricePerDay)}/day
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto">
                           <button
                             onClick={() => handleApprove(eq.id)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors"
                           >
                             <CheckCircle className="w-3.5 h-3.5" />
                             Approve
                           </button>
                           <button
                             onClick={() => handleReject(eq.id)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors"
                           >
                             <XCircle className="w-3.5 h-3.5" />
                             Reject
@@ -196,10 +196,10 @@ export default function AdminDashboard() {
               </div>
 
               {/* Broadcast Notification */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Megaphone className="w-5 h-5 text-brand-600" />
-                  <h2 className="font-semibold text-gray-900">Broadcast Notification</h2>
+                  <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Broadcast Notification</h2>
                 </div>
                 <div className="space-y-3">
                   <div>

@@ -1,9 +1,10 @@
 import type { NextConfig } from 'next'
+import withPWA from 'next-pwa'
 
 const isGithubPages = process.env.GITHUB_PAGES === 'true'
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
 
-const nextConfig: NextConfig = {
+const baseConfig: NextConfig = {
   reactStrictMode: true,
   output: isGithubPages ? 'export' : 'standalone',
   basePath,
@@ -41,4 +42,23 @@ const nextConfig: NextConfig = {
   }),
 }
 
-export default nextConfig
+const pwaConfig = withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'offlineCache',
+        expiration: {
+          maxEntries: 200,
+        },
+      },
+    },
+  ],
+})
+
+export default isGithubPages ? baseConfig : pwaConfig(baseConfig)

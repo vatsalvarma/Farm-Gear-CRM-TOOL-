@@ -97,17 +97,17 @@ export default function FarmerDashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
             Welcome back, {user?.fullName}!
           </h1>
-          <p className="text-gray-600 mt-1">Here's what's happening with your bookings</p>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">Here's what's happening with your bookings</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           {[
             {
               label: 'Active Bookings',
@@ -139,44 +139,44 @@ export default function FarmerDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-lg shadow-md p-6"
+              className="bg-white rounded-lg shadow-md p-4 sm:p-6"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                  <p className="text-gray-600 text-xs sm:text-sm">{stat.label}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{stat.value}</p>
                 </div>
-                <div className={`${stat.color} p-3 rounded-lg`}>
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div className={`${stat.color} p-2 sm:p-3 rounded-lg`}>
+                  <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {/* Recent Bookings */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Recent Bookings</h2>
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recent Bookings</h2>
               <button
                 onClick={() => router.push('/farmer/bookings')}
-                className="text-green-600 hover:text-green-700 text-sm font-medium"
+                className="text-green-600 hover:text-green-700 text-xs sm:text-sm font-medium"
               >
                 View All
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {recentBookings.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No bookings yet</p>
+                <p className="text-gray-500 text-center py-6 sm:py-8 text-sm">No bookings yet</p>
               ) : (
                 recentBookings.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer"
+                    className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer"
                     onClick={() => router.push(`/farmer/bookings/${booking.id}`)}
                   >
-                    <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                    <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-lg overflow-hidden">
                       {booking.equipment.primaryImageUrl ? (
                         <img
                           src={booking.equipment.primaryImageUrl}
@@ -185,15 +185,15 @@ export default function FarmerDashboard() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Tractor className="w-8 h-8 text-gray-400" />
+                          <Tractor className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                         </div>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">
+                    <div className="flex-1 w-full">
+                      <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
                         {booking.equipment.title}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs sm:text-sm text-gray-600">
                         {booking.startDate} - {booking.endDate}
                       </p>
                       <span
@@ -210,8 +210,8 @@ export default function FarmerDashboard() {
                         {booking.status}
                       </span>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-gray-900">
+                    <div className="text-right w-full sm:w-auto">
+                      <p className="text-base sm:text-lg font-bold text-gray-900">
                         ₹{booking.totalAmount}
                       </p>
                     </div>
@@ -222,29 +222,29 @@ export default function FarmerDashboard() {
           </div>
 
           {/* Nearby Equipment */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Nearby Equipment</h2>
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Nearby Equipment</h2>
               <button
                 onClick={() => router.push('/marketplace/nearby')}
-                className="text-green-600 hover:text-green-700 text-sm font-medium"
+                className="text-green-600 hover:text-green-700 text-xs sm:text-sm font-medium"
               >
                 View All
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {nearbyEquipment.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
+                <p className="text-gray-500 text-center py-6 sm:py-8 text-sm">
                   Enable location to see nearby equipment
                 </p>
               ) : (
                 nearbyEquipment.map((equipment) => (
                   <div
                     key={equipment.id}
-                    className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer"
+                    className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer"
                     onClick={() => router.push(`/equipment/${equipment.id}`)}
                   >
-                    <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                    <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-lg overflow-hidden">
                       {equipment.images[0] ? (
                         <img
                           src={equipment.images[0].imageUrl}
@@ -253,27 +253,27 @@ export default function FarmerDashboard() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Tractor className="w-8 h-8 text-gray-400" />
+                          <Tractor className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                         </div>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{equipment.title}</h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                        <MapPin className="w-4 h-4" />
+                    <div className="flex-1 w-full">
+                      <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{equipment.title}</h3>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mt-1">
+                        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>
                           {equipment.distanceKm?.toFixed(1)} km away
                         </span>
                       </div>
                       <div className="flex items-center gap-1 mt-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">
+                        <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-xs sm:text-sm font-medium">
                           {equipment.averageRating.toFixed(1)}
                         </span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-green-600">
+                    <div className="text-right w-full sm:w-auto">
+                      <p className="text-base sm:text-lg font-bold text-green-600">
                         ₹{equipment.pricePerDay}
                       </p>
                       <p className="text-xs text-gray-500">per day</p>
@@ -286,7 +286,7 @@ export default function FarmerDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           {[
             {
               title: 'Browse Equipment',
@@ -316,15 +316,15 @@ export default function FarmerDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
               onClick={action.action}
-              className="bg-white rounded-lg shadow-md p-6 text-left hover:shadow-lg transition-shadow"
+              className="bg-white rounded-lg shadow-md p-4 sm:p-6 text-left hover:shadow-lg transition-shadow"
             >
-              <div className={`${action.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
-                <action.icon className="w-6 h-6 text-white" />
+              <div className={`${action.color} w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mb-3 sm:mb-4`}>
+                <action.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
                 {action.title}
               </h3>
-              <p className="text-gray-600 text-sm">{action.description}</p>
+              <p className="text-gray-600 text-xs sm:text-sm">{action.description}</p>
             </motion.button>
           ))}
         </div>
