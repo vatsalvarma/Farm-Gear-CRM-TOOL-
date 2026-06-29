@@ -14,6 +14,9 @@ A comprehensive SaaS marketplace platform connecting farmers with agricultural e
 - ✅ **USER-Dashboard** - add equipment,
 - <img width="1917" height="963" alt="image" src="https://github.com/user-attachments/assets/3f27238f-4bb1-4bd0-9457-9317044cf7e2" />
 - <img width="1918" height="962" alt="image" src="https://github.com/user-attachments/assets/1795de90-9145-4521-9ca2-507d3b54b2bd" />
+<img width="1918" height="965" alt="image" src="https://github.com/user-attachments/assets/a302468d-df74-4f78-aded-33d4cd7ad1cd" />
+-<img width="1919" height="971" alt="image" src="https://github.com/user-attachments/assets/3352ec82-3143-4e0e-8ad7-9f038097e021" />
+-<img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/16b90268-b3cb-4752-98f1-23ca63b65342" />
 - ✅ **Equipment Marketplace** - Browse, search, and filter equipment
 - <img width="1916" height="962" alt="image" src="https://github.com/user-attachments/assets/6352f0b0-7dde-464b-aa51-7dbf97b3ba9f" />
 - ✅ **GPS-Based Search** - Find nearby equipment
