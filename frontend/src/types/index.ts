@@ -12,6 +12,8 @@ export type FuelType = 'DIESEL' | 'PETROL' | 'ELECTRIC' | 'MANUAL' | 'SOLAR'
 export type EquipmentStatus =
   | 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' | 'ARCHIVED'
 
+export type AvailabilityStatus = 'AVAILABLE' | 'IN_USE' | 'UNDER_MAINTENANCE' | 'UNAVAILABLE'
+
 export type BookingStatus =
   | 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED'
 
@@ -57,6 +59,7 @@ export interface Equipment {
   latitude?: number
   longitude?: number
   status: EquipmentStatus
+  availabilityStatus?: AvailabilityStatus
   adminNote?: string
   availableFrom?: string
   availableTo?: string

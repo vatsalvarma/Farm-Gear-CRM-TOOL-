@@ -21,7 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,29 +76,17 @@ public class UserController {
     }
 
     @PostMapping(value = "/users/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload profile photo (PNG / JPG only, max 10 MB)")
+    @Operation(summary = "Upload profile photo (PNG / JPG only, max 5 MB) — stored in database")
     public ResponseEntity<Map<String, String>> uploadAvatar(
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal UserPrincipal principal) {
         User user = userRepository.findById(principal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String url;
-        try {
-            url = storageService.uploadProfilePhoto(file, user.getId());
-        } catch (Exception minioUnavailable) {
-            try {
-                String mime = file.getContentType() != null ? file.getContentType() : "image/jpeg";
-                String b64 = Base64.getEncoder().encodeToString(file.getBytes());
-                url = "data:" + mime + ";base64," + b64;
-            } catch (Exception e) {
-                throw new BadRequestException("Failed to process image: " + e.getMessage());
-            }
-        }
-
-        user.setProfilePhotoUrl(url);
+        String dataUri = storageService.uploadProfilePhoto(file, user.getId());
+        user.setProfilePhotoUrl(dataUri);
         userRepository.save(user);
-        return ResponseEntity.ok(Map.of("profilePhotoUrl", url));
+        return ResponseEntity.ok(Map.of("profilePhotoUrl", dataUri));
     }
 
     @PostMapping("/users/me/change-password")
@@ -166,6 +154,8 @@ public class UserController {
         m.put("profilePhotoUrl",  user.getProfilePhotoUrl() != null ? user.getProfilePhotoUrl() : "");
         m.put("emailVerified",    user.isEmailVerified());
         m.put("preferredLanguage", user.getPreferredLanguage().name());
+        m.put("kycCompleted",     user.isKycCompleted());
+        m.put("role",             user.getRole().name());
         return m;
     }
 }

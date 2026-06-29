@@ -11,6 +11,7 @@ export interface UserProfile {
   profilePhotoUrl: string
   emailVerified: boolean
   preferredLanguage: string
+  kycCompleted?: boolean
 }
 
 const getData = (r: { data: unknown }) => r.data as UserProfile

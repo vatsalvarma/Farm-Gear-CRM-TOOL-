@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Tractor, Calendar, Search, MessageCircle, Bell, User, LogOut, Menu, X } from 'lucide-react'
 import { useAuthStore } from '@/lib/store/authStore'
+import KycBanner from '@/components/KycBanner'
 
 const navItems = [
   { href: '/farmer/dashboard', icon: Calendar, label: 'Dashboard' },
@@ -13,6 +14,7 @@ const navItems = [
   { href: '/farmer/messages', icon: MessageCircle, label: 'Messages' },
   { href: '/farmer/notifications', icon: Bell, label: 'Notifications' },
   { href: '/farmer/profile', icon: User, label: 'Profile' },
+  { href: '/kyc', icon: User, label: 'KYC Verification' },
 ]
 
 export default function FarmerLayout({ children }: { children: React.ReactNode }) {
@@ -93,6 +95,7 @@ export default function FarmerLayout({ children }: { children: React.ReactNode }
         </aside>
 
         <main className="flex-1 overflow-auto pt-16 lg:pt-0">
+          <KycBanner />
           {children}
         </main>
       </div>

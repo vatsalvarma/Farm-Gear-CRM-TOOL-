@@ -12,6 +12,7 @@ interface User {
   emailVerified: boolean
   phoneVerified?: boolean
   preferredLanguage: string
+  kycCompleted?: boolean
 }
 
 interface AuthState {
@@ -51,6 +52,7 @@ export const useAuthStore = create<AuthState>()(
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('user')
+        localStorage.removeItem('auth-storage')
         
         set({
           user: null,

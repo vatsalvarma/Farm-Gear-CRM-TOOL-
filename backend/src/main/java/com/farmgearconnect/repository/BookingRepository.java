@@ -23,6 +23,10 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     Page<Booking> findByOwnerOrderByCreatedAtDesc(User owner, Pageable pageable);
 
+    /** All bookings for a specific piece of equipment, newest first (owner-scoped). */
+    Page<Booking> findByEquipmentAndOwnerOrderByCreatedAtDesc(
+            Equipment equipment, User owner, Pageable pageable);
+
     Page<Booking> findByEquipmentOrderByCreatedAtDesc(
             Equipment equipment, Pageable pageable);
 

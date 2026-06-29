@@ -31,13 +31,14 @@ export default function FarmerProfilePage() {
   useEffect(() => {
     userApi.getMe().then(p => {
       setProfile(p)
-      setForm({ fullName: p.fullName, phone: p.phone, state: p.state, district: p.district, village: p.village, preferredLanguage: p.preferredLanguage })
+      setForm({ fullName: p.fullName, phone: p.phone ?? '', state: p.state ?? '', district: p.district ?? '', village: p.village ?? '', preferredLanguage: p.preferredLanguage ?? 'ENGLISH' })
+      updateUser({ profilePhotoUrl: p.profilePhotoUrl || undefined, phone: p.phone || undefined })
     }).catch(() => {
       if (authUser) {
-        setForm({ fullName: authUser.fullName, phone: '', state: '', district: '', village: '', preferredLanguage: authUser.preferredLanguage })
+        setForm({ fullName: authUser.fullName, phone: authUser.phone ?? '', state: '', district: '', village: '', preferredLanguage: authUser.preferredLanguage })
       }
     })
-  }, [authUser])
+  }, [])
 
   const pickAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -120,8 +121,8 @@ export default function FarmerProfilePage() {
   const inputCls = 'w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white'
 
   return (
-    <div className="p-8 max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">My Profile</h1>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-2xl">
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">My Profile</h1>
 
       {/* ── Avatar ── */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-4">
@@ -171,7 +172,7 @@ export default function FarmerProfilePage() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {(['state', 'district', 'village'] as const).map(f => (
               <div key={f}>
                 <label className="block text-xs font-medium text-gray-500 mb-1 capitalize"><MapPin className="w-3 h-3 inline mr-1" />{f}</label>
@@ -226,7 +227,7 @@ export default function FarmerProfilePage() {
         <p className="text-xs text-gray-400 mb-4">Current: <span className="font-medium text-gray-700">{profile?.email ?? authUser?.email}</span></p>
 
         {emailStep === 'idle' ? (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="email"
               value={newEmail}
@@ -235,7 +236,7 @@ export default function FarmerProfilePage() {
               className={inputCls}
             />
             <button onClick={sendEmailOtp} disabled={sendingOtp}
-              className="inline-flex items-center gap-1.5 bg-brand-600 text-white text-sm px-4 py-2.5 rounded-lg hover:bg-brand-700 disabled:opacity-70 transition-colors whitespace-nowrap">
+              className="inline-flex items-center justify-center gap-1.5 bg-brand-600 text-white text-sm px-4 py-2.5 rounded-lg hover:bg-brand-700 disabled:opacity-70 transition-colors whitespace-nowrap">
               {sendingOtp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
               {sendingOtp ? 'Sending...' : 'Send OTP'}
             </button>
@@ -243,7 +244,7 @@ export default function FarmerProfilePage() {
         ) : (
           <div className="space-y-3">
             <p className="text-sm text-green-600 font-medium">OTP sent to <strong>{newEmail}</strong></p>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={emailOtp}
@@ -253,7 +254,7 @@ export default function FarmerProfilePage() {
                 className={inputCls}
               />
               <button onClick={confirmEmailChange} disabled={savingEmail}
-                className="inline-flex items-center gap-1.5 bg-brand-600 text-white text-sm px-4 py-2.5 rounded-lg hover:bg-brand-700 disabled:opacity-70 transition-colors whitespace-nowrap">
+                className="inline-flex items-center justify-center gap-1.5 bg-brand-600 text-white text-sm px-4 py-2.5 rounded-lg hover:bg-brand-700 disabled:opacity-70 transition-colors whitespace-nowrap">
                 {savingEmail ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
                 {savingEmail ? 'Verifying...' : 'Verify & Change'}
               </button>

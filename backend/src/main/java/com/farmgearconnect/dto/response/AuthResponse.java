@@ -29,10 +29,12 @@ public class AuthResponse {
         private UUID id;
         private String fullName;
         private String email;
+        private String phone;
         private User.UserRole role;
         private String profilePhotoUrl;
         private boolean emailVerified;
         private String preferredLanguage;
         private boolean hasActiveSubscription;
+        private boolean kycCompleted;
     }
 }

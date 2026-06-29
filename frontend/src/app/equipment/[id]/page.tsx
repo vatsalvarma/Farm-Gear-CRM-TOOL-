@@ -14,6 +14,13 @@ import { bookingsApi } from '@/lib/api/bookings'
 import { useAuthStore } from '@/lib/store/authStore'
 import type { Equipment } from '@/types'
 
+const AVAIL_CONFIG: Record<string, { label: string; dot: string; badge: string }> = {
+  AVAILABLE:         { label: 'Available',        dot: 'bg-green-500',  badge: 'bg-green-100 text-green-700 border-green-200' },
+  IN_USE:            { label: 'In Use',           dot: 'bg-blue-500',   badge: 'bg-blue-100 text-blue-700 border-blue-200' },
+  UNDER_MAINTENANCE: { label: 'Under Maintenance',dot: 'bg-orange-500', badge: 'bg-orange-100 text-orange-700 border-orange-200' },
+  UNAVAILABLE:       { label: 'Unavailable',      dot: 'bg-red-500',    badge: 'bg-red-100 text-red-700 border-red-200' },
+}
+
 declare global {
   interface Window { Razorpay: any }
 }
@@ -235,7 +242,18 @@ export default function EquipmentDetailPage() {
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900">{equipment.title}</h1>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-2xl font-bold text-gray-900">{equipment.title}</h1>
+                    {(() => {
+                      const avail = AVAIL_CONFIG[equipment.availabilityStatus ?? 'AVAILABLE']
+                      return (
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${avail.badge}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${avail.dot}`} />
+                          {avail.label}
+                        </span>
+                      )
+                    })()}
+                  </div>
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-500">
                     <span className="bg-green-50 text-green-700 px-2.5 py-1 rounded-full font-medium">
                       {equipment.category?.replace(/_/g, ' ')}
@@ -329,13 +347,20 @@ export default function EquipmentDetailPage() {
                 <p className="text-sm text-gray-400">per day</p>
               </div>
 
-              <button
-                onClick={handleBookNow}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-base"
-              >
-                <Calendar className="w-5 h-5" />
-                Book Now
-              </button>
+              {equipment.availabilityStatus && equipment.availabilityStatus !== 'AVAILABLE' ? (
+                <div className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold border ${AVAIL_CONFIG[equipment.availabilityStatus].badge}`}>
+                  <span className={`w-2 h-2 rounded-full ${AVAIL_CONFIG[equipment.availabilityStatus].dot}`} />
+                  {AVAIL_CONFIG[equipment.availabilityStatus].label} — Cannot Book
+                </div>
+              ) : (
+                <button
+                  onClick={handleBookNow}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-base"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Book Now
+                </button>
+              )}
 
               <div className="mt-4 space-y-2 text-sm text-gray-500">
                 <div className="flex items-center gap-2">

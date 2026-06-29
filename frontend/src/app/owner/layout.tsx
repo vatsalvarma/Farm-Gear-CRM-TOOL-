@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Tractor, BarChart3, Plus, Calendar, TrendingUp, MessageCircle, Bell, User, Settings, LogOut, Menu, X } from 'lucide-react'
+import { Tractor, BarChart3, Plus, Calendar, TrendingUp, MessageCircle, Bell, User, Settings, LogOut, Menu, X, Shield } from 'lucide-react'
 import { useAuthStore } from '@/lib/store/authStore'
+import KycBanner from '@/components/KycBanner'
 
 const navItems = [
   { href: '/owner/dashboard', icon: BarChart3, label: 'Dashboard' },
@@ -16,6 +17,7 @@ const navItems = [
   { href: '/owner/notifications', icon: Bell, label: 'Notifications' },
   { href: '/owner/profile', icon: User, label: 'Profile' },
   { href: '/owner/settings', icon: Settings, label: 'Settings' },
+  { href: '/kyc', icon: Shield, label: 'KYC Verification' },
 ]
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
@@ -96,6 +98,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
         </aside>
 
         <main className="flex-1 overflow-auto pt-16 lg:pt-0">
+          <KycBanner />
           {children}
         </main>
       </div>

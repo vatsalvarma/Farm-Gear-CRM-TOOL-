@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   Filter,
@@ -12,16 +12,29 @@ import {
   TrendingDown,
   Navigation,
   SlidersHorizontal,
+  AlertTriangle,
+  X,
 } from 'lucide-react'
-import { Equipment, EquipmentCategory, FuelType } from '@/types'
+import { Equipment, EquipmentCategory, FuelType, AvailabilityStatus } from '@/types'
+import { useAuthStore } from '@/lib/store/authStore'
+
+const AVAIL_CONFIG: Record<string, { label: string; classes: string }> = {
+  AVAILABLE:         { label: 'Available',         classes: 'bg-green-100 text-green-700' },
+  IN_USE:            { label: 'In Use',             classes: 'bg-blue-100 text-blue-700' },
+  UNDER_MAINTENANCE: { label: 'Under Maintenance',  classes: 'bg-orange-100 text-orange-700' },
+  UNAVAILABLE:       { label: 'Unavailable',        classes: 'bg-red-100 text-red-700' },
+}
 
 export default function MarketplacePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { user } = useAuthStore()
   const [equipment, setEquipment] = useState<Equipment[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [showFilters, setShowFilters] = useState(false)
+  const [showKycGate, setShowKycGate] = useState(false)
+  const [pendingRoute, setPendingRoute] = useState('')
   
   // Filters
   const [category, setCategory] = useState<EquipmentCategory | ''>('')
@@ -45,9 +58,12 @@ export default function MarketplacePage() {
       if (maxPrice) params.append('maxPrice', maxPrice)
       if (searchQuery) params.append('search', searchQuery)
 
-      const response = await fetch(`/api/marketplace?${params.toString()}`)
+      const response = await fetch(`/backend/marketplace?${params.toString()}`)
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`)
+      }
       const data = await response.json()
-      setEquipment(data.content || [])
+      setEquipment(data.content || data || [])
     } catch (error) {
       console.error('Failed to fetch equipment:', error)
     } finally {
@@ -57,6 +73,16 @@ export default function MarketplacePage() {
 
   const handleSearch = () => {
     fetchEquipment()
+  }
+
+  // KYC gate: farmers must complete profile before accessing details
+  const handleEquipmentNav = (route: string) => {
+    if (user?.role === 'FARMER' && !user?.kycCompleted) {
+      setPendingRoute(route)
+      setShowKycGate(true)
+      return
+    }
+    router.push(route)
   }
 
   const handleNearbySearch = () => {
@@ -78,6 +104,42 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* KYC Gate Modal */}
+      <AnimatePresence>
+        {showKycGate && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-amber-100 rounded-xl flex-shrink-0">
+                  <AlertTriangle className="w-6 h-6 text-amber-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900">Complete Your Profile First</h3>
+                  <p className="text-sm text-gray-600 mt-2">
+                    To access equipment details and make bookings, you need to complete your KYC verification.
+                    This helps us ensure a safe marketplace for all users.
+                  </p>
+                  <div className="mt-4 flex gap-3">
+                    <button onClick={() => { setShowKycGate(false); router.push('/kyc') }}
+                      className="flex-1 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold transition-colors">
+                      Complete KYC
+                    </button>
+                    <button onClick={() => setShowKycGate(false)}
+                      className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50">
+                      Later
+                    </button>
+                  </div>
+                </div>
+                <button onClick={() => setShowKycGate(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -289,12 +351,24 @@ export default function MarketplacePage() {
 
                 {/* Content */}
                 <div className="p-4">
-                  <h3
-                    className="text-base font-semibold text-gray-900 mb-1 line-clamp-1 cursor-pointer hover:text-green-700"
-                    onClick={() => router.push(`/equipment/${item.id}`)}
-                  >
-                    {item.title}
-                  </h3>
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h3
+                      className="text-base font-semibold text-gray-900 line-clamp-1 cursor-pointer hover:text-green-700 flex-1 min-w-0"
+                      onClick={() => router.push(`/equipment/${item.id}`)}
+                    >
+                      {item.title}
+                    </h3>
+                    {item.availabilityStatus && item.availabilityStatus !== 'AVAILABLE' && (
+                      <span className={`flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full ${AVAIL_CONFIG[item.availabilityStatus]?.classes}`}>
+                        {AVAIL_CONFIG[item.availabilityStatus]?.label}
+                      </span>
+                    )}
+                    {(!item.availabilityStatus || item.availabilityStatus === 'AVAILABLE') && (
+                      <span className="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        Available
+                      </span>
+                    )}
+                  </div>
 
                   <p className="text-xs text-gray-400 mb-2">{item.category?.replace(/_/g, ' ')} · {item.brand}</p>
 
@@ -316,14 +390,15 @@ export default function MarketplacePage() {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => router.push(`/equipment/${item.id}`)}
+                        onClick={() => handleEquipmentNav(`/equipment/${item.id}`)}
                         className="px-3 py-2 border border-gray-200 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
                       >
                         View Details
                       </button>
                       <button
-                        onClick={() => router.push(`/equipment/${item.id}?book=true`)}
-                        className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-colors"
+                        onClick={() => handleEquipmentNav(`/equipment/${item.id}?book=true`)}
+                        disabled={item.availabilityStatus !== 'AVAILABLE' && item.availabilityStatus != null}
+                        className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-600"
                       >
                         Book Now
                       </button>

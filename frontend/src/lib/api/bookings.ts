@@ -83,6 +83,22 @@ export const bookingsApi = {
     }
   },
 
+  // Get bookings for a specific equipment (owner view)
+  getBookingsByEquipment: async (
+    equipmentId: string,
+    page = 0,
+    size = 20
+  ): Promise<any> => {
+    try {
+      const response = await apiClient.get(`/owner/bookings`, {
+        params: { equipmentId, page, size },
+      })
+      return response.data
+    } catch (error) {
+      throw new Error(handleApiError(error))
+    }
+  },
+
   // Approve booking (owner)
   approve: async (id: string, ownerNote?: string): Promise<Booking> => {
     try {

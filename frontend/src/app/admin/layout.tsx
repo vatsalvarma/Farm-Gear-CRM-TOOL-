@@ -3,16 +3,18 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart3, Users, Tractor, Calendar, Tag, Bell, LogOut, ShieldCheck, Menu, X } from 'lucide-react'
+import { BarChart3, Users, Tractor, Calendar, Tag, Bell, LogOut, ShieldCheck, ShieldBan, Shield, Menu, X } from 'lucide-react'
 import { useAuthStore } from '@/lib/store/authStore'
 
 const navItems = [
-  { href: '/admin/dashboard', icon: BarChart3, label: 'Dashboard' },
-  { href: '/admin/users',     icon: Users,     label: 'Users' },
-  { href: '/admin/equipment', icon: Tractor,   label: 'Equipment' },
-  { href: '/admin/bookings',  icon: Calendar,  label: 'Bookings' },
-  { href: '/admin/coupons',   icon: Tag,       label: 'Coupons' },
-  { href: '/admin/notifications', icon: Bell,  label: 'Notifications' },
+  { href: '/admin/dashboard',    icon: BarChart3,  label: 'Dashboard' },
+  { href: '/admin/users',        icon: Users,      label: 'Users' },
+  { href: '/admin/banned-users', icon: ShieldBan,  label: 'Banned Users' },
+  { href: '/admin/kyc',          icon: Shield,     label: 'KYC Verification' },
+  { href: '/admin/equipment',    icon: Tractor,    label: 'Equipment' },
+  { href: '/admin/bookings',     icon: Calendar,   label: 'Bookings' },
+  { href: '/admin/coupons',      icon: Tag,        label: 'Coupons' },
+  { href: '/admin/notifications',icon: Bell,       label: 'Notifications' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -62,11 +64,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   pathname === item.href
-                    ? 'bg-brand-50 text-brand-700'
+                    ? item.href === '/admin/banned-users'
+                      ? 'bg-red-50 text-red-700'
+                      : 'bg-brand-50 text-brand-700'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                <item.icon className="w-4 h-4 flex-shrink-0" />
+                <item.icon className={`w-4 h-4 flex-shrink-0 ${item.href === '/admin/banned-users' && pathname !== item.href ? 'text-red-400' : ''}`} />
                 <span className="truncate">{item.label}</span>
               </Link>
             ))}

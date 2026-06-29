@@ -38,6 +38,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    /** OAuth 2.0 provider: GOOGLE, GITHUB, etc. — null for password accounts */
+    @Column
+    private String oauthProvider;
+
+    /** The unique account ID returned by the provider (sub / id field) */
+    @Column
+    private String oauthProviderId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -63,6 +71,13 @@ public class User {
 
     @Column
     private String suspensionReason;
+
+    @Column
+    private java.time.LocalDateTime bannedAt;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean kycCompleted = false;
 
     @Column
     private String state;

@@ -95,16 +95,16 @@ export default function FarmerBookingsPage() {
     })
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Bookings</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Bookings</h1>
           <p className="text-sm text-gray-500 mt-1">
             {totalElements} booking{totalElements !== 1 ? 's' : ''} total
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={fetchBookings}
             className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
@@ -114,10 +114,10 @@ export default function FarmerBookingsPage() {
           </button>
           <button
             onClick={() => router.push('/marketplace')}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+            className="flex items-center gap-2 bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
           >
             <Tractor className="w-4 h-4" />
-            Book Equipment
+            <span>Book Equipment</span>
           </button>
         </div>
       </div>
@@ -184,67 +184,70 @@ export default function FarmerBookingsPage() {
               className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all cursor-pointer"
               onClick={() => router.push(`/farmer/bookings/${booking.id}`)}
             >
-              <div className="p-5 flex items-center gap-4">
-                {/* Equipment Image */}
-                <div className="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
-                  {booking.equipment.primaryImageUrl ? (
-                    <img
-                      src={booking.equipment.primaryImageUrl}
-                      alt={booking.equipment.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Tractor className="w-8 h-8 text-gray-300" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Details */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {booking.equipment.title}
-                    </h3>
-                    <span
-                      className={`flex-shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                        statusConfig[booking.status]?.classes ?? 'bg-gray-100 text-gray-600'
-                      }`}
-                    >
-                      {statusConfig[booking.status]?.label ?? booking.status}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-gray-500">
-                    {booking.bookingReference && (
-                      <span className="font-mono text-xs text-gray-400">
-                        #{booking.bookingReference}
-                      </span>
+              <div className="p-4 sm:p-5">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  {/* Equipment Image */}
+                  <div className="flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 bg-gray-100 rounded-lg overflow-hidden">
+                    {booking.equipment.primaryImageUrl ? (
+                      <img
+                        src={booking.equipment.primaryImageUrl}
+                        alt={booking.equipment.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Tractor className="w-6 h-6 sm:w-8 sm:h-8 text-gray-300" />
+                      </div>
                     )}
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {formatDate(booking.startDate)} – {formatDate(booking.endDate)}
-                    </span>
-                    <span className="text-gray-400">
-                      {booking.equipment.district}, {booking.equipment.state}
-                    </span>
                   </div>
 
-                  {booking.rejectionReason && (
-                    <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
-                      <XCircle className="w-3 h-3" />
-                      {booking.rejectionReason}
-                    </p>
-                  )}
-                </div>
+                  {/* Details */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">
+                        {booking.equipment.title}
+                      </h3>
+                      <span
+                        className={`flex-shrink-0 px-2 py-0.5 text-xs font-semibold rounded-full ${
+                          statusConfig[booking.status]?.classes ?? 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {statusConfig[booking.status]?.label ?? booking.status}
+                      </span>
+                    </div>
 
-                {/* Amount */}
-                <div className="flex-shrink-0 text-right">
-                  <div className="flex items-center justify-end gap-0.5 text-lg font-bold text-gray-900">
-                    <IndianRupee className="w-4 h-4" />
-                    {booking.totalAmount.toLocaleString('en-IN')}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs sm:text-sm text-gray-500">
+                      {booking.bookingReference && (
+                        <span className="font-mono text-xs text-gray-400">#{booking.bookingReference}</span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        {formatDate(booking.startDate)} – {formatDate(booking.endDate)}
+                      </span>
+                    </div>
+
+                    {booking.rejectionReason && (
+                      <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        {booking.rejectionReason}
+                      </p>
+                    )}
+
+                    {/* Amount on mobile */}
+                    <div className="mt-2 flex items-center gap-0.5 text-base font-bold text-gray-900 sm:hidden">
+                      <IndianRupee className="w-3.5 h-3.5" />
+                      {booking.totalAmount.toLocaleString('en-IN')}
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-400 mt-0.5">Total</p>
+
+                  {/* Amount desktop */}
+                  <div className="hidden sm:block flex-shrink-0 text-right">
+                    <div className="flex items-center justify-end gap-0.5 text-lg font-bold text-gray-900">
+                      <IndianRupee className="w-4 h-4" />
+                      {booking.totalAmount.toLocaleString('en-IN')}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5">Total</p>
+                  </div>
                 </div>
               </div>
             </motion.div>

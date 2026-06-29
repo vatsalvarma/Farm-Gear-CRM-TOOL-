@@ -228,6 +228,25 @@ public class BookingService {
         return PageResponse.from(paged.map(this::mapToResponse));
     }
 
+    /**
+     * Returns all bookings for a specific equipment owned by the caller.
+     * Used by the "My Equipment" page to show per-equipment booking requests.
+     */
+    @Transactional(readOnly = true)
+    public PageResponse<BookingResponse> getBookingsByEquipment(UUID ownerId, UUID equipmentId,
+                                                                 int page, int size) {
+        User owner = userRepository.findByIdAndDeletedAtIsNull(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner not found"));
+        Equipment equipment = equipmentRepository.findByIdAndDeletedAtIsNull(equipmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Equipment not found"));
+        if (!equipment.getOwner().getId().equals(ownerId)) {
+            throw new ForbiddenException("You do not own this equipment");
+        }
+        var paged = bookingRepository.findByEquipmentAndOwnerOrderByCreatedAtDesc(
+                equipment, owner, PageRequest.of(page, size));
+        return PageResponse.from(paged.map(this::mapToResponse));
+    }
+
     @Transactional(readOnly = true)
     public BigDecimal getTotalEarnings(UUID ownerId) {
         User owner = userRepository.findByIdAndDeletedAtIsNull(ownerId)

@@ -16,6 +16,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmailAndDeletedAtIsNull(String email);
 
+    Optional<User> findByOauthProviderAndOauthProviderIdAndDeletedAtIsNull(
+            String oauthProvider, String oauthProviderId);
+
     Optional<User> findByIdAndDeletedAtIsNull(UUID id);
 
     boolean existsByEmail(String email);
@@ -41,4 +44,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL")
     long countActiveUsers();
+
+    // ── Ban queries ───────────────────────────────────────────────────────────
+
+    Page<User> findBySuspendedTrueAndDeletedAtIsNull(Pageable pageable);
+
+    Page<User> findBySuspendedTrueAndRoleAndDeletedAtIsNull(User.UserRole role, Pageable pageable);
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL AND u.suspended = true")
+    long countBannedUsers();
 }

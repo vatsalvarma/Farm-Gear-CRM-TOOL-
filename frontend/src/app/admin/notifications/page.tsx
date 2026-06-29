@@ -40,33 +40,33 @@ export default function AdminNotificationsPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-        <p className="text-gray-500 mt-1">Broadcast messages and notification history</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Notifications</h1>
+        <p className="text-gray-500 mt-1 text-sm sm:text-base">Broadcast messages and notification history</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="col-span-1 lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm">
           <div className="p-4 border-b border-gray-100 font-semibold text-gray-900 text-sm">Recent Notifications</div>
           {loading ? (
-            <div className="p-12 text-center text-gray-400">Loading…</div>
+            <div className="p-8 sm:p-12 text-center text-gray-400">Loading…</div>
           ) : notifications.length === 0 ? (
-            <div className="p-12 text-center text-gray-400">
+            <div className="p-8 sm:p-12 text-center text-gray-400">
               <Bell className="w-10 h-10 mx-auto mb-2 text-gray-300" />
               No notifications yet
             </div>
           ) : (
             <div className="divide-y divide-gray-50 max-h-[60vh] overflow-auto">
               {notifications.map(n => (
-                <div key={n.id} className={`p-4 ${n.read ? 'opacity-60' : ''}`}>
+                <div key={n.id} className={`p-3 sm:p-4 ${n.read ? 'opacity-60' : ''}`}>
                   <div className="flex items-start gap-3">
                     <Bell className="w-4 h-4 text-brand-500 mt-0.5 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-900">{n.title}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">{n.message}</div>
+                      <div className="text-xs text-gray-500 mt-0.5 break-words">{n.message}</div>
                     </div>
-                    <div className="text-xs text-gray-400 flex-shrink-0">{new Date(n.createdAt).toLocaleDateString()}</div>
+                    <div className="text-xs text-gray-400 flex-shrink-0 ml-2">{new Date(n.createdAt).toLocaleDateString()}</div>
                   </div>
                 </div>
               ))}
@@ -74,7 +74,7 @@ export default function AdminNotificationsPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-fit">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5 h-fit">
           <div className="flex items-center gap-2 mb-4 font-semibold text-gray-900 text-sm">
             <Megaphone className="w-4 h-4 text-brand-600" />
             Broadcast to All Users

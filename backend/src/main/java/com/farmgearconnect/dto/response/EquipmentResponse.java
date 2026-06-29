@@ -36,6 +36,7 @@ public class EquipmentResponse {
     private Double latitude;
     private Double longitude;
     private Equipment.EquipmentStatus status;
+    private Equipment.AvailabilityStatus availabilityStatus;
     private String adminNote;
     private LocalDate availableFrom;
     private LocalDate availableTo;

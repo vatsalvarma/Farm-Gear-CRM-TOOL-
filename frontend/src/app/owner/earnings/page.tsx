@@ -181,11 +181,11 @@ export default function OwnerEarningsPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Earnings Overview</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Earnings Overview</h1>
           <p className="text-sm text-gray-500 mt-1">Track your income from equipment rentals</p>
         </div>
         <button
@@ -198,21 +198,21 @@ export default function OwnerEarningsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {statCards.map((card, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className={`${card.bg} border ${card.border} rounded-xl p-5`}
+            className={`${card.bg} border ${card.border} rounded-xl p-3 sm:p-5`}
           >
-            <div className="flex items-start justify-between mb-3">
-              <p className="text-sm font-medium text-gray-600">{card.label}</p>
-              <card.icon className={`w-5 h-5 ${card.iconColor}`} />
+            <div className="flex items-start justify-between mb-2 sm:mb-3">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 leading-tight">{card.label}</p>
+              <card.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${card.iconColor} flex-shrink-0 ml-1`} />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{card.sub}</p>
+            <p className="text-lg sm:text-2xl font-bold text-gray-900">{card.value}</p>
+            <p className="text-xs text-gray-500 mt-0.5 sm:mt-1 hidden sm:block">{card.sub}</p>
           </motion.div>
         ))}
       </div>

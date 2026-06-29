@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'ax
 
 const API_BASE_URL =
   typeof window !== 'undefined'
-    ? '/api'
+    ? '/backend'
     : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api')
 
 // Create axios instance
@@ -28,6 +28,24 @@ apiClient.interceptors.request.use(
   }
 )
 
+// In-flight refresh promise — prevents multiple simultaneous refresh calls
+let refreshPromise: Promise<string> | null = null
+
+function syncTokensToZustand(accessToken: string, refreshToken: string) {
+  try {
+    const raw = localStorage.getItem('auth-storage')
+    if (!raw) return
+    const parsed = JSON.parse(raw)
+    if (parsed?.state) {
+      parsed.state.accessToken = accessToken
+      parsed.state.refreshToken = refreshToken
+      localStorage.setItem('auth-storage', JSON.stringify(parsed))
+    }
+  } catch {
+    // Ignore parse errors
+  }
+}
+
 // Response interceptor to handle token refresh
 apiClient.interceptors.response.use(
   (response) => response,
@@ -35,38 +53,52 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
     const status = error.response?.status
 
-    // Handle 401 (unauthenticated) or 403 (may be expired token returning access-denied)
-    if ((status === 401 || status === 403) && !originalRequest._retry) {
+    // Only intercept 401 (expired/missing token). 403 = forbidden, not expired.
+    if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken')
-        if (!refreshToken) {
-          throw new Error('No refresh token')
+        // Reuse an in-flight refresh to avoid multiple simultaneous refresh calls
+        if (!refreshPromise) {
+          const refreshToken = localStorage.getItem('refreshToken')
+          if (!refreshToken) throw new Error('No refresh token')
+
+          refreshPromise = axios
+            .post('/backend/auth/refresh', { refreshToken })
+            .then((res) => {
+              const { accessToken, refreshToken: newRefreshToken } = res.data
+              localStorage.setItem('accessToken', accessToken)
+              localStorage.setItem('refreshToken', newRefreshToken)
+              // Keep Zustand auth-storage in sync so page reloads use fresh tokens
+              syncTokensToZustand(accessToken, newRefreshToken)
+              return accessToken
+            })
+            .finally(() => {
+              refreshPromise = null
+            })
         }
 
-        // Try to refresh the token
-        const response = await axios.post('/api/auth/refresh', {
-          refreshToken,
-        })
+        const newAccessToken = await refreshPromise
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data
-
-        // Save new tokens
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', newRefreshToken)
-
-        // Retry original request with new token
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         }
         return apiClient(originalRequest)
       } catch (refreshError) {
-        // Refresh failed, logout user
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('refreshToken')
-        localStorage.removeItem('user')
-        window.location.href = '/login'
+        refreshPromise = null
+        // Only log out when the refresh token is definitively rejected (401/403).
+        // Network errors or 5xx mean the backend is temporarily down — keep the
+        // user logged in so they aren't kicked out during a server restart.
+        const refreshStatus = axios.isAxiosError(refreshError)
+          ? refreshError.response?.status
+          : undefined
+        if (refreshStatus === 401 || refreshStatus === 403) {
+          localStorage.removeItem('accessToken')
+          localStorage.removeItem('refreshToken')
+          localStorage.removeItem('user')
+          localStorage.removeItem('auth-storage')
+          window.location.href = '/login'
+        }
         return Promise.reject(refreshError)
       }
     }

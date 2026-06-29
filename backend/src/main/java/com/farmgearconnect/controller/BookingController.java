@@ -53,12 +53,18 @@ public class BookingController {
 
     @GetMapping("/owner/bookings")
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "Get owner's bookings")
+    @Operation(summary = "Get owner's bookings (optionally filtered by equipmentId)")
     public ResponseEntity<PageResponse<BookingResponse>> getOwnerBookings(
             @RequestParam(required = false) Booking.BookingStatus status,
+            @RequestParam(required = false) UUID equipmentId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal UserPrincipal principal) {
+        if (equipmentId != null) {
+            return ResponseEntity.ok(
+                    bookingService.getBookingsByEquipment(
+                            principal.getId(), equipmentId, page, size));
+        }
         return ResponseEntity.ok(
                 bookingService.getOwnerBookings(principal.getId(), status, page, size));
     }

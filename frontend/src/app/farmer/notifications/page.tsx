@@ -30,10 +30,10 @@ export default function FarmerNotificationsPage() {
   const unread = notifications.filter(n => !n.isRead).length
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Notifications</h1>
           {unread > 0 && <p className="text-sm text-gray-500 mt-0.5">{unread} unread</p>}
         </div>
         {unread > 0 && (

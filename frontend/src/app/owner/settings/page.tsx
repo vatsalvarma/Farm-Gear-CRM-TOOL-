@@ -15,8 +15,8 @@ export default function OwnerSettingsPage() {
   ]
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Settings</h1>
 
       <div className="max-w-lg space-y-4">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">

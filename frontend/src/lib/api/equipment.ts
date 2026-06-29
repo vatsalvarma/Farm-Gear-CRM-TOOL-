@@ -48,10 +48,23 @@ export const equipmentApi = {
     }
   },
 
-  // Update equipment listing
+  // Update equipment (full update)
   update: async (id: string, data: EquipmentRequest): Promise<Equipment> => {
     try {
       const response = await apiClient.put(`/owner/equipment/${id}`, data)
+      return response.data
+    } catch (error) {
+      throw new Error(handleApiError(error))
+    }
+  },
+
+  // Patch only price / availability fields (partial update)
+  patchDetails: async (
+    id: string,
+    data: { pricePerDay?: number; pricePerHour?: number; availabilityStatus?: string; depositAmount?: number }
+  ): Promise<Equipment> => {
+    try {
+      const response = await apiClient.patch(`/owner/equipment/${id}`, data)
       return response.data
     } catch (error) {
       throw new Error(handleApiError(error))

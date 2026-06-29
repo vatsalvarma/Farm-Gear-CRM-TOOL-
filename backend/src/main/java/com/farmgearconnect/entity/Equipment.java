@@ -90,6 +90,11 @@ public class Equipment {
     @Column(columnDefinition = "TEXT")
     private String adminNote;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private AvailabilityStatus availabilityStatus = AvailabilityStatus.AVAILABLE;
+
     @Column
     private LocalDate availableFrom;
 
@@ -142,5 +147,9 @@ public class Equipment {
 
     public enum EquipmentStatus {
         DRAFT, PENDING_APPROVAL, APPROVED, REJECTED, SUSPENDED, ARCHIVED
+    }
+
+    public enum AvailabilityStatus {
+        AVAILABLE, IN_USE, UNDER_MAINTENANCE, UNAVAILABLE
     }
 }

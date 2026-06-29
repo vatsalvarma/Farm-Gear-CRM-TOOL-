@@ -26,10 +26,10 @@ export default function AdminCouponsPage() {
   }, [])
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Coupons</h1>
-        <p className="text-gray-500 mt-1">Discount coupons for subscriptions</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Coupons</h1>
+        <p className="text-gray-500 mt-1 text-sm sm:text-base">Discount coupons for subscriptions</p>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
@@ -43,18 +43,20 @@ export default function AdminCouponsPage() {
         ) : (
           <div className="divide-y divide-gray-50">
             {coupons.map(c => (
-              <div key={c.id} className="p-4 flex items-center gap-4">
-                <div className="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Tag className="w-5 h-5 text-yellow-600" />
+              <div key={c.id} className="p-3 sm:p-4 flex items-start sm:items-center gap-3 sm:gap-4">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Tag className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-gray-900 font-mono">{c.code}</div>
                   <div className="text-xs text-gray-500">{c.usedCount} / {c.maxUses} uses · Expires {c.expiryDate}</div>
                 </div>
-                <div className="text-lg font-bold text-brand-600">{c.discountPercent}% off</div>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {c.active ? 'Active' : 'Inactive'}
-                </span>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="text-base sm:text-lg font-bold text-brand-600">{c.discountPercent}% off</div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {c.active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

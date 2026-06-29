@@ -7,6 +7,13 @@ import { equipmentApi } from '@/lib/api/equipment'
 import { formatCurrency } from '@/lib/utils'
 import type { Equipment } from '@/types'
 
+const AVAIL_CONFIG: Record<string, { label: string; classes: string }> = {
+  AVAILABLE:         { label: 'Available',         classes: 'bg-green-100 text-green-700' },
+  IN_USE:            { label: 'In Use',             classes: 'bg-blue-100 text-blue-700' },
+  UNDER_MAINTENANCE: { label: 'Under Maintenance',  classes: 'bg-orange-100 text-orange-700' },
+  UNAVAILABLE:       { label: 'Unavailable',        classes: 'bg-red-100 text-red-700' },
+}
+
 export default function NearbyPage() {
   const [equipment, setEquipment] = useState<Equipment[]>([])
   const [loading, setLoading] = useState(false)
@@ -117,7 +124,14 @@ export default function NearbyPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-gray-900 truncate">{eq.title}</div>
+                        <div className="flex items-start justify-between gap-1.5 mb-0.5">
+                          <span className="font-medium text-gray-900 truncate">{eq.title}</span>
+                          <span className={`flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                            AVAIL_CONFIG[eq.availabilityStatus ?? 'AVAILABLE']?.classes
+                          }`}>
+                            {AVAIL_CONFIG[eq.availabilityStatus ?? 'AVAILABLE']?.label}
+                          </span>
+                        </div>
                         <div className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
                           <MapPin className="w-3 h-3 flex-shrink-0" />
                           {eq.district}, {eq.state}

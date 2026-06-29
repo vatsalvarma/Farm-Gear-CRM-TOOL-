@@ -1,6 +1,7 @@
 package com.farmgearconnect.service;
 
 import com.farmgearconnect.dto.request.LoginRequest;
+import com.farmgearconnect.dto.request.OAuthRequest;
 import com.farmgearconnect.dto.request.RegisterRequest;
 import com.farmgearconnect.dto.response.AuthResponse;
 import com.farmgearconnect.entity.*;
@@ -105,6 +106,13 @@ public class AuthService {
         User user = userRepository.findByIdAndDeletedAtIsNull(principal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        // Block banned users explicitly with a clear message
+        if (user.isSuspended()) {
+            String reason = user.getSuspensionReason() != null
+                    ? user.getSuspensionReason() : "Violated platform policy";
+            throw new UnauthorizedException("Your account has been banned. Reason: " + reason);
+        }
+
         user.setLastLoginAt(LocalDateTime.now());
         user.setLastLoginIp(ipAddress);
         userRepository.save(user);
@@ -121,8 +129,114 @@ public class AuthService {
         return generateAuthResponse(user);
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // OAuth 2.0 Login / Auto-Registration
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Called by the Next.js NextAuth callback after a successful provider sign-in.
+     *
+     * Strategy:
+     * 1. Look up by (provider, providerAccountId) → returning OAuth user → update & return tokens.
+     * 2. Look up by email → existing password account → link OAuth identity → return tokens.
+     * 3. Neither found → create new user (emailVerified = true, random password) → return tokens.
+     *
+     * @param request   OAuth payload forwarded by the frontend.
+     * @param ipAddress client IP for audit logging.
+     * @return JWT pair and user summary.
+     */
+    @Transactional
+    public AuthResponse oauthLogin(OAuthRequest request, String ipAddress) {
+        String provider   = request.getProvider().toUpperCase();
+        String providerId = request.getProviderAccountId();
+
+        // ── 1. Returning OAuth user ──────────────────────────────────────────
+        User user = userRepository
+                .findByOauthProviderAndOauthProviderIdAndDeletedAtIsNull(provider, providerId)
+                .orElse(null);
+
+        if (user == null) {
+            // ── 2. Email already registered (password account) ───────────────
+            user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).orElse(null);
+
+            if (user != null) {
+                // Link the OAuth identity to the existing account
+                user.setOauthProvider(provider);
+                user.setOauthProviderId(providerId);
+                if (request.getImage() != null && user.getProfilePhotoUrl() == null) {
+                    user.setProfilePhotoUrl(request.getImage());
+                }
+                user.setEmailVerified(true); // provider has already verified the email
+            } else {
+                // ── 3. Brand-new user ────────────────────────────────────────
+                User.UserRole role;
+                try {
+                    role = User.UserRole.valueOf(
+                            request.getRole() != null ? request.getRole().toUpperCase() : "FARMER");
+                } catch (IllegalArgumentException e) {
+                    role = User.UserRole.FARMER;
+                }
+
+                String displayName = (request.getName() != null && !request.getName().isBlank())
+                        ? request.getName()
+                        : request.getEmail().split("@")[0];
+
+                user = User.builder()
+                        .fullName(displayName)
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(UUID.randomUUID().toString()))
+                        .role(role)
+                        .profilePhotoUrl(request.getImage())
+                        .oauthProvider(provider)
+                        .oauthProviderId(providerId)
+                        .emailVerified(true)   // provider already verified
+                        .preferredLanguage(User.Language.ENGLISH)
+                        .lastLoginIp(ipAddress)
+                        .build();
+
+                user = userRepository.save(user);
+
+                if (role == User.UserRole.OWNER) {
+                    provisionOwnerSubscription(user, null);
+                }
+
+                auditLogRepository.save(AuditLog.builder()
+                        .user(user)
+                        .action("USER_OAUTH_REGISTERED")
+                        .entityType("User")
+                        .entityId(user.getId().toString())
+                        .ipAddress(ipAddress)
+                        .details("provider=" + provider)
+                        .build());
+            }
+        }
+
+        user.setLastLoginAt(LocalDateTime.now());
+        user.setLastLoginIp(ipAddress);
+        userRepository.save(user);
+
+        // Block banned users from OAuth login too
+        if (user.isSuspended()) {
+            String reason = user.getSuspensionReason() != null
+                    ? user.getSuspensionReason() : "Violated platform policy";
+            throw new UnauthorizedException("Your account has been banned. Reason: " + reason);
+        }
+
+        auditLogRepository.save(AuditLog.builder()
+                .user(user)
+                .action("USER_OAUTH_LOGIN")
+                .entityType("User")
+                .entityId(user.getId().toString())
+                .ipAddress(ipAddress)
+                .details("provider=" + provider)
+                .build());
+
+        return generateAuthResponse(user);
+    }
+
     @Transactional
     public AuthResponse refreshToken(String refreshToken, String ipAddress) {
+
         RefreshToken token = refreshTokenRepository.findByTokenAndRevokedFalse(refreshToken)
                 .orElseThrow(() -> new UnauthorizedException("Invalid or expired refresh token"));
 
@@ -290,11 +404,13 @@ public class AuthService {
                         .id(user.getId())
                         .fullName(user.getFullName())
                         .email(user.getEmail())
+                        .phone(user.getPhone())
                         .role(user.getRole())
                         .profilePhotoUrl(user.getProfilePhotoUrl())
                         .emailVerified(user.isEmailVerified())
                         .preferredLanguage(user.getPreferredLanguage().name())
                         .hasActiveSubscription(hasActiveSub)
+                        .kycCompleted(user.isKycCompleted())
                         .build())
                 .build();
     }

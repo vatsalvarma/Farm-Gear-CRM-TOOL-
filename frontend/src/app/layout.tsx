@@ -2,7 +2,9 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { SessionProvider } from '@/components/providers/SessionProvider'
 import { Toaster } from '@/components/ui/sonner'
+import { SessionHydrator } from '@/components/SessionHydrator'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -67,15 +69,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster richColors position="top-right" />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionHydrator />
+            {children}
+            <Toaster richColors position="top-right" />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )

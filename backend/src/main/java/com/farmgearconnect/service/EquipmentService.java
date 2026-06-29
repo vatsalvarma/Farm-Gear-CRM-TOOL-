@@ -1,5 +1,6 @@
 package com.farmgearconnect.service;
 
+import com.farmgearconnect.dto.request.EquipmentPatchRequest;
 import com.farmgearconnect.dto.request.EquipmentRequest;
 import com.farmgearconnect.dto.response.EquipmentResponse;
 import com.farmgearconnect.dto.response.PageResponse;
@@ -152,6 +153,27 @@ public class EquipmentService {
         Equipment equipment = getEquipmentForOwner(equipmentId, ownerId);
         equipment.setDeletedAt(LocalDateTime.now());
         equipmentRepository.save(equipment);
+    }
+
+    /**
+     * Partial update — only prices and availability status.
+     * Does NOT reset admin approval status (no re-review required).
+     */
+    @Transactional
+    public EquipmentResponse patchListing(UUID equipmentId, UUID ownerId,
+                                           EquipmentPatchRequest patch) {
+        Equipment equipment = getEquipmentForOwner(equipmentId, ownerId);
+
+        if (patch.getPricePerDay() != null)
+            equipment.setPricePerDay(patch.getPricePerDay());
+        if (patch.getPricePerHour() != null)
+            equipment.setPricePerHour(patch.getPricePerHour());
+        if (patch.getDepositAmount() != null)
+            equipment.setDepositAmount(patch.getDepositAmount());
+        if (patch.getAvailabilityStatus() != null)
+            equipment.setAvailabilityStatus(patch.getAvailabilityStatus());
+
+        return mapToResponse(equipmentRepository.save(equipment), null);
     }
 
     @Transactional(readOnly = true)
@@ -330,6 +352,7 @@ public class EquipmentService {
                 .latitude(e.getLatitude())
                 .longitude(e.getLongitude())
                 .status(e.getStatus())
+                .availabilityStatus(e.getAvailabilityStatus())
                 .adminNote(e.getAdminNote())
                 .availableFrom(e.getAvailableFrom())
                 .availableTo(e.getAvailableTo())

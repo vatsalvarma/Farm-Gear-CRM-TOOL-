@@ -1,6 +1,7 @@
 package com.farmgearconnect.controller;
 
 import com.farmgearconnect.dto.request.LoginRequest;
+import com.farmgearconnect.dto.request.OAuthRequest;
 import com.farmgearconnect.dto.request.RegisterRequest;
 import com.farmgearconnect.dto.response.AuthResponse;
 import com.farmgearconnect.entity.OtpVerification;
@@ -40,6 +41,14 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
         return ResponseEntity.ok(authService.login(request, getClientIp(httpRequest)));
+    }
+
+    @PostMapping("/oauth")
+    @Operation(summary = "OAuth 2.0 login / auto-registration via Google or GitHub")
+    public ResponseEntity<AuthResponse> oauthLogin(
+            @Valid @RequestBody OAuthRequest request,
+            HttpServletRequest httpRequest) {
+        return ResponseEntity.ok(authService.oauthLogin(request, getClientIp(httpRequest)));
     }
 
     @PostMapping("/refresh")

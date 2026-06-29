@@ -32,6 +32,7 @@ export interface AuthResponse {
     emailVerified: boolean
     phoneVerified?: boolean
     preferredLanguage: string
+    kycCompleted?: boolean
   }
 }
 

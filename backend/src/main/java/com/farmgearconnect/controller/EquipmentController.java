@@ -1,5 +1,6 @@
 package com.farmgearconnect.controller;
 
+import com.farmgearconnect.dto.request.EquipmentPatchRequest;
 import com.farmgearconnect.dto.request.EquipmentRequest;
 import com.farmgearconnect.dto.response.EquipmentResponse;
 import com.farmgearconnect.dto.response.PageResponse;
@@ -73,6 +74,17 @@ public class EquipmentController {
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(
                 equipmentService.updateListing(id, principal.getId(), request));
+    }
+
+    @PatchMapping("/owner/equipment/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Partial update: prices and availability status (no re-approval needed)")
+    public ResponseEntity<EquipmentResponse> patch(
+            @PathVariable UUID id,
+            @RequestBody EquipmentPatchRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(
+                equipmentService.patchListing(id, principal.getId(), request));
     }
 
     @DeleteMapping("/owner/equipment/{id}")

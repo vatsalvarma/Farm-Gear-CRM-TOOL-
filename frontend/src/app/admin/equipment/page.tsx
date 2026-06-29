@@ -109,11 +109,11 @@ export default function AdminEquipmentPage() {
                 key={eq.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="p-4 flex items-start gap-4 hover:bg-gray-50/50 transition-colors"
+                className="p-3 sm:p-4 flex flex-col sm:flex-row items-start gap-3 sm:gap-4 hover:bg-gray-50/50 transition-colors"
               >
                 {/* Equipment Image */}
                 <div
-                  className="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-lg overflow-hidden cursor-pointer"
+                  className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-lg overflow-hidden cursor-pointer"
                   onClick={() => setPreview(eq)}
                 >
                   {eq.images && eq.images.length > 0 ? (
@@ -174,7 +174,7 @@ export default function AdminEquipmentPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col gap-2 flex-shrink-0">
+                <div className="flex flex-row sm:flex-col gap-2 flex-shrink-0 w-full sm:w-auto">
                   <button
                     onClick={() => approve(eq.id)}
                     disabled={actionLoading === eq.id + '_approve'}

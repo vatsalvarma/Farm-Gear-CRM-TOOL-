@@ -32,10 +32,13 @@ const baseConfig: NextConfig = {
       ]
     },
     async rewrites() {
+      const BACKEND = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'
       return [
+        // /backend/* → Spring Boot's /api/*
+        // This prefix never conflicts with NextAuth's /api/auth/* routes.
         {
-          source: '/api/:path*',
-          destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/:path*`,
+          source: '/backend/:path*',
+          destination: `${BACKEND}/:path*`,
         },
       ]
     },

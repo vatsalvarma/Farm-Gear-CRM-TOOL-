@@ -84,9 +84,9 @@ export default function OwnerBookingsPage() {
 
   const filteredBookings = bookings.filter((b) =>
     search
-      ? b.equipment.title.toLowerCase().includes(search.toLowerCase()) ||
-        b.farmer.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        b.bookingReference?.toLowerCase().includes(search.toLowerCase())
+      ? (b.equipment?.title ?? '').toLowerCase().includes(search.toLowerCase()) ||
+        (b.farmer?.fullName ?? '').toLowerCase().includes(search.toLowerCase()) ||
+        (b.bookingReference ?? '').toLowerCase().includes(search.toLowerCase())
       : true
   )
 
@@ -96,11 +96,11 @@ export default function OwnerBookingsPage() {
   const pendingCount = bookings.filter(b => b.status === 'PENDING').length
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Bookings</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Bookings</h1>
           <p className="text-sm text-gray-500 mt-1">
             {totalElements} booking{totalElements !== 1 ? 's' : ''} total
             {pendingCount > 0 && (
@@ -173,10 +173,10 @@ export default function OwnerBookingsPage() {
               transition={{ delay: index * 0.04 }}
               className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all"
             >
-              <div className="p-5">
-                <div className="flex items-start gap-4">
+              <div className="p-4 sm:p-5">
+                <div className="flex items-start gap-3 sm:gap-4">
                   {/* Equipment image */}
-                  <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg overflow-hidden">
                     {booking.equipment.primaryImageUrl ? (
                       <img
                         src={booking.equipment.primaryImageUrl}
@@ -194,9 +194,9 @@ export default function OwnerBookingsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2 flex-wrap">
                       <div>
-                        <h3 className="font-semibold text-gray-900">{booking.equipment.title}</h3>
+                        <h3 className="font-semibold text-gray-900">{booking.equipment?.title}</h3>
                         <p className="text-xs text-gray-400 mt-0.5">
-                          {booking.equipment.district}, {booking.equipment.state}
+                          {booking.equipment?.district}, {booking.equipment?.state}
                         </p>
                       </div>
                       <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${statusConfig[booking.status]?.classes ?? 'bg-gray-100 text-gray-600'}`}>
@@ -208,13 +208,13 @@ export default function OwnerBookingsPage() {
                     <div className="mt-3 flex items-center gap-3 flex-wrap text-sm text-gray-600">
                       <div className="flex items-center gap-1.5">
                         <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                          {booking.farmer.profilePhotoUrl ? (
+                          {booking.farmer?.profilePhotoUrl ? (
                             <img src={booking.farmer.profilePhotoUrl} alt="" className="w-full h-full rounded-full object-cover" />
                           ) : (
                             <User className="w-3.5 h-3.5 text-green-600" />
                           )}
                         </div>
-                        <span className="font-medium text-gray-800">{booking.farmer.fullName}</span>
+                        <span className="font-medium text-gray-800">{booking.farmer?.fullName ?? 'Unknown'}</span>
                       </div>
                       {booking.bookingReference && (
                         <span className="font-mono text-xs text-gray-400">#{booking.bookingReference}</span>
@@ -243,21 +243,21 @@ export default function OwnerBookingsPage() {
 
                   {/* Amount + actions */}
                   <div className="flex-shrink-0 text-right">
-                    <div className="flex items-center justify-end gap-0.5 text-lg font-bold text-gray-900">
-                      <IndianRupee className="w-4 h-4" />
+                    <div className="flex items-center justify-end gap-0.5 text-base sm:text-lg font-bold text-gray-900">
+                      <IndianRupee className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       {booking.totalAmount.toLocaleString('en-IN')}
                     </div>
                     {booking.depositAmount ? (
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Deposit: ₹{booking.depositAmount.toLocaleString('en-IN')}
+                        Dep: ₹{booking.depositAmount.toLocaleString('en-IN')}
                       </p>
                     ) : null}
 
                     {booking.status === 'PENDING' && (
-                      <div className="mt-3 flex flex-col gap-1.5">
+                      <div className="mt-2 flex flex-col gap-1.5">
                         <button
                           onClick={() => router.push(`/owner/bookings/${booking.id}`)}
-                          className="flex items-center justify-center gap-1 bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                          className="flex items-center justify-center gap-1 bg-green-600 text-white text-xs px-2 sm:px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors font-medium"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           Review
