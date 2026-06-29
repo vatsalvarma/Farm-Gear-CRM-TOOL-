@@ -1,7 +1,7 @@
 # FarmGearConnect - Agricultural Equipment Rental Platform
-
-A comprehensive SaaS marketplace platform connecting farmers with agricultural equipment owners across India. Built with Spring Boot backend and Next.js frontend.
 <img width="1916" height="868" alt="image" src="https://github.com/user-attachments/assets/4520c081-3490-487b-b313-684e3dc79eef" />
+A comprehensive SaaS marketplace platform connecting farmers with agricultural equipment owners across India. Built with Spring Boot backend and Next.js frontend.
+
 
 
 ## 🚀 Features
