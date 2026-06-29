@@ -1,4 +1,4 @@
-<img width="1919" height="963" alt="image" src="https://github.com/user-attachments/assets/36f955f1-25eb-4b5f-afed-31143ccfc66d" /># FarmGearConnect - Agricultural Equipment Rental Platform
+# FarmGearConnect - Agricultural Equipment Rental Platform
 <img width="1916" height="868" alt="image" src="https://github.com/user-attachments/assets/4520c081-3490-487b-b313-684e3dc79eef" />
 A comprehensive SaaS marketplace platform connecting farmers with agricultural equipment owners across India. Built with Spring Boot backend and Next.js frontend.
 
