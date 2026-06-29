@@ -1,4 +1,4 @@
-# FarmGearConnect - Agricultural Equipment Rental Platform
+<img width="1919" height="963" alt="image" src="https://github.com/user-attachments/assets/36f955f1-25eb-4b5f-afed-31143ccfc66d" /># FarmGearConnect - Agricultural Equipment Rental Platform
 <img width="1916" height="868" alt="image" src="https://github.com/user-attachments/assets/4520c081-3490-487b-b313-684e3dc79eef" />
 A comprehensive SaaS marketplace platform connecting farmers with agricultural equipment owners across India. Built with Spring Boot backend and Next.js frontend.
 
@@ -8,10 +8,15 @@ A comprehensive SaaS marketplace platform connecting farmers with agricultural e
 
 ### Core Features
 - ✅ **Multilingual Support** - English & Telugu
+- <img width="1918" height="870" alt="Screenshot 2026-06-29 150224" src="https://github.com/user-attachments/assets/d837121a-37be-4879-b86f-4fe46c3672ea" />
 - ✅ **Role-Based Access** - Farmer, Equipment Owner, Admin
+- <img width="1917" height="956" alt="image" src="https://github.com/user-attachments/assets/06c37a0a-e7a6-4bee-86a6-521254f633b2" />
 - ✅ **Equipment Marketplace** - Browse, search, and filter equipment
+- <img width="1916" height="962" alt="image" src="https://github.com/user-attachments/assets/6352f0b0-7dde-464b-aa51-7dbf97b3ba9f" />
 - ✅ **GPS-Based Search** - Find nearby equipment
+- <img width="1908" height="860" alt="image" src="https://github.com/user-attachments/assets/4cc4906b-21cc-4787-866b-d04283ccfd96" />
 - ✅ **Booking System** - Complete booking workflow with approval
+-  <img width="1911" height="945" alt="image" src="https://github.com/user-attachments/assets/2c4cde60-3def-4fc9-92d7-3e594deba0c6" />
 - ✅ **Secure Communication** - In-app chat with voice notes
 - ✅ **Masked Calling** - Call without exposing phone numbers (Exotel/Twilio)
 - ✅ **Payment Integration** - Razorpay for subscriptions and deposits
